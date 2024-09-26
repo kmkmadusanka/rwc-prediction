@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadworthy Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        input, select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        button {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Roadworthy Certificate Prediction</h1>
+        <form id="vehicleForm">
+            <label for="Vehicle_Age">Vehicle Age (Years)</label>
+            <input type="number" id="Vehicle_Age" name="Vehicle_Age" required>
+
+            <label for="Kilometres">Kilometres (Mileage)</label>
+            <input type="number" id="Kilometres" name="Kilometres" required>
+
+            <label for="Brake_Condition">Brake Condition</label>
+            <select id="Brake_Condition" name="Brake_Condition">
+                <option value="0">Good</option>
+                <option value="1">Bad</option>
+            </select>
+
+            <label for="Tire_Condition">Tire Condition</label>
+            <select id="Tire_Condition" name="Tire_Condition">
+                <option value="0">Good</option>
+                <option value="1">Bad</option>
+            </select>
+
+            <label for="Suspension_Condition">Suspension Condition</label>
+            <select id="Suspension_Condition" name="Suspension_Condition">
+                <option value="0">Good</option>
+                <option value="1">Bad</option>
+            </select>
+
+            <label for="Emission_Compliance">Emission Compliance</label>
+            <select id="Emission_Compliance" name="Emission_Compliance">
+                <option value="0">Pass</option>
+                <option value="1">Fail</option>
+            </select>
+
+            <button type="button" onclick="predictRoadworthy()">Predict Roadworthy Status</button>
+        </form>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        async function predictRoadworthy() {
+            // Get form data
+            const formData = {
+                vehicle_age: parseFloat(document.getElementById('Vehicle_Age').value),
+                kilometer: parseFloat(document.getElementById('Kilometres').value),
+                brake_condition_bad: parseInt(document.getElementById('Brake_Condition').value),
+                tire_condition_bad: parseInt(document.getElementById('Tire_Condition').value),
+                suspension_condition_bad: parseInt(document.getElementById('Suspension_Condition').value),
+                emission_compliance_fail: parseInt(document.getElementById('Emission_Compliance').value)
+            };
+
+            // Send the POST request to the API
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            // Display the result
+            document.getElementById('result').innerText = `Roadworthy Status: ${result.roadworthy_prediction}`;
+        }
+    </script>
+</body>
+</html>
